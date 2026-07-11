@@ -1,0 +1,143 @@
+Q1- Write a program that will prompt for a EMPNO,ENAME,SAL. 
+If EMPNO does not exists in EMP table then INSERT the EMPNO,ENAME,SAL into the EMP table else UPDATE ENAME,SAL for that EMPNO.
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+    V_EMPNO EMP.EMPNO%TYPE;
+    V_ENAME EMP.ENAME%TYPE;
+    V_SAL   EMP.SAL%TYPE;
+    CNT NUMBER;
+BEGIN
+    V_EMPNO := &EMPNO;
+    V_ENAME := '&ENAME';
+    V_SAL   := &SAL;
+
+    SELECT COUNT(*)
+    INTO CNT
+    FROM EMP
+    WHERE EMPNO = V_EMPNO;
+
+    IF CNT = 0 THEN
+
+        INSERT INTO EMP(EMPNO,ENAME,SAL)
+        VALUES(V_EMPNO,V_ENAME,V_SAL);
+
+        DBMS_OUTPUT.PUT_LINE('Employee Inserted Successfully');
+
+    ELSE
+
+        UPDATE EMP
+        SET ENAME = V_ENAME,
+            SAL = V_SAL
+        WHERE EMPNO = V_EMPNO;
+
+        DBMS_OUTPUT.PUT_LINE('Employee Updated Successfully');
+
+    END IF;
+
+END;
+/
+
+Q2- Write a program that will prompt for number and display whether the number is ODD or EVEN number.
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+    NUM NUMBER;
+BEGIN
+
+    NUM := &NUMBER;
+
+    IF MOD(NUM,2)=0 THEN
+        DBMS_OUTPUT.PUT_LINE(NUM||' IS EVEN');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE(NUM||' IS ODD');
+    END IF;
+
+END;
+/
+
+Q3- Write program that prompts for EMPNO and update his salary based on the below specification:
+If the employee belongs to DEPTNO 10 then update his salary by 10%.
+If the employee belongs to DEPTNO 20 then update his salary by 15%.
+If the employee belongs to other DEPTNO then update his salary with SALARY+COMM.
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+    V_EMPNO EMP.EMPNO%TYPE;
+    V_DEPTNO EMP.DEPTNO%TYPE;
+
+BEGIN
+
+    V_EMPNO := &EMPNO;
+
+    SELECT DEPTNO
+    INTO V_DEPTNO
+    FROM EMP
+    WHERE EMPNO=V_EMPNO;
+
+    IF V_DEPTNO=10 THEN
+
+        UPDATE EMP
+        SET SAL=SAL*1.10
+        WHERE EMPNO=V_EMPNO;
+
+        DBMS_OUTPUT.PUT_LINE('10% Salary Updated');
+
+    ELSIF V_DEPTNO=20 THEN
+
+        UPDATE EMP
+        SET SAL=SAL*1.15
+        WHERE EMPNO=V_EMPNO;
+
+        DBMS_OUTPUT.PUT_LINE('15% Salary Updated');
+
+    ELSE
+
+        UPDATE EMP
+        SET SAL=SAL+NVL(COMM,0)
+        WHERE EMPNO=V_EMPNO;
+
+        DBMS_OUTPUT.PUT_LINE('Salary Updated with Commission');
+
+    END IF;
+
+END;
+/
+
+Q4- In sql Prompt create a table MYTABLE1 with RESULT as a column of number datatype.
+Write a program that will insert record in the mytable from 1,2,3… to 10 values. 
+Do not insert record 6 and 8 
+Ans-
+CREATE TABLE MYTABLE1
+(
+RESULT NUMBER
+);
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+    I NUMBER:=1;
+
+BEGIN
+
+    WHILE I<=10 LOOP
+
+        IF I<>6 AND I<>8 THEN
+
+            INSERT INTO MYTABLE1
+            VALUES(I);
+
+        END IF;
+
+        I:=I+1;
+
+    END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('Records Inserted');
+
+END;
+/
