@@ -1,0 +1,62 @@
+Q1- Find the highest, lowest, sum, and average salary of all employees. Label the columns
+Ans-
+SELECT MAX(SAL) AS "Highest Salary",
+       MIN(SAL) AS "Lowest Salary",
+       SUM(SAL) AS "Total Salary",
+       ROUND(AVG(SAL)) AS "Average Salary"
+FROM EMP;
+
+Q2- Maximum, Minimum, Sum, and Average, respectively. Round your results to the nearest whole number.
+Ans-
+SELECT ROUND(MAX(SAL)) AS MAXIMUM,
+       ROUND(MIN(SAL)) AS MINIMUM,
+       ROUND(SUM(SAL)) AS SUM,
+       ROUND(AVG(SAL)) AS AVERAGE
+FROM EMP;
+
+
+Q3- Modify the above query to display the minimum, maximum, sum, and average salary for each job type.
+Ans-
+SELECT JOB,
+       MIN(SAL) AS MINIMUM,
+       MAX(SAL) AS MAXIMUM,
+       SUM(SAL) AS TOTAL,
+       ROUND(AVG(SAL)) AS AVERAGE
+FROM EMP
+GROUP BY JOB;
+
+Q4- Write a query to display the number of people with the same job
+Ans-
+SELECT JOB,
+       COUNT(*) AS TOTAL_EMPLOYEES
+FROM EMP
+GROUP BY JOB;
+
+Q5- Determine the number of managers without listing them. Label the column Number of Managers
+Ans-
+SELECT COUNT(DISTINCT MGR) AS "Number of Managers"
+FROM EMP;
+
+Q6- Find the difference between the highest and lowest salaries. Label the column DIFFERENCE.
+Ans-
+SELECT MAX(SAL) - MIN(SAL) AS DIFFERENCE
+FROM EMP;
+
+Q7- Create a report to display the manager number and the salary of the lowest-paid employee for that manager. Exclude anyone whose manager is not known. Exclude any groups where the minimum salary is $2000 or less. Sort the output in descending order of salary.
+Ans-
+SELECT MGR,
+       MIN(SAL) AS LOWEST_SALARY
+FROM EMP
+WHERE MGR IS NOT NULL
+GROUP BY MGR
+HAVING MIN(SAL) > 2000
+ORDER BY LOWEST_SALARY DESC;
+
+Q8- Create a query to display the total number of employees and, of that total, the number of employees hired in 1980, 1981, and 1982. Create appropriate column headings.
+Ans-
+SELECT COUNT(*) AS TOTAL_EMPLOYEES,
+       SUM(CASE WHEN EXTRACT(YEAR FROM HIREDATE)=1980 THEN 1 ELSE 0 END) AS HIRED_1980,
+       SUM(CASE WHEN EXTRACT(YEAR FROM HIREDATE)=1981 THEN 1 ELSE 0 END) AS HIRED_1981,
+       SUM(CASE WHEN EXTRACT(YEAR FROM HIREDATE)=1982 THEN 1 ELSE 0 END) AS HIRED_1982
+FROM EMP;
+
