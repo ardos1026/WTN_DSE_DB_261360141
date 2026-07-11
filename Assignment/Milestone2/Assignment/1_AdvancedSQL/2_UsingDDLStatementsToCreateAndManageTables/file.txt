@@ -1,0 +1,178 @@
+Q1- Create table dept1 as below with following columns: DEPTNO INTEGER PK,DNAME VARCHAR2(30) NOT NULL,LOC VARCHAR2(30)  NOT NULL
+Ans-
+CREATE TABLE DEPT1
+(
+    DEPTNO INTEGER PRIMARY KEY,
+    DNAME  VARCHAR2(30) NOT NULL,
+    LOC    VARCHAR2(30) NOT NULL
+);
+
+Q2- Create table emp1 with the following columns EMPNO INTEGER PK,ENAME VARCHAR2(20) NOT NULL,SAL NUMBER(10,2) check(sal>5000),mgr number FK(EMPNO),DEPTNO INTEGER FK(DEPTNO)
+Ans-
+CREATE TABLE EMP1
+(
+    EMPNO INTEGER PRIMARY KEY,
+    ENAME VARCHAR2(20) NOT NULL,
+    SAL NUMBER(10,2) CHECK(SAL>5000),
+    MGR NUMBER,
+    DEPTNO INTEGER,
+
+    CONSTRAINT FK_MGR
+    FOREIGN KEY(MGR)
+    REFERENCES EMP1(EMPNO),
+
+    CONSTRAINT FK_DEPT
+    FOREIGN KEY(DEPTNO)
+    REFERENCES DEPT1(DEPTNO)
+);
+
+Q3- Create tables Dept11,Emp11 from Dept1,Emp1.
+Ans-
+CREATE TABLE DEPT11
+AS
+SELECT *
+FROM DEPT1;
+CREATE TABLE EMP11
+AS
+SELECT *
+FROM EMP1;
+
+Q4- Add a new column Address-Varchar2(30) in the Emp1 table.
+Ans-
+ALTER TABLE EMP1
+ADD ADDRESS VARCHAR2(30);
+
+Q5- Rename SAL column in Emp1 table to SALARY.
+Ans-
+ALTER TABLE EMP1
+RENAME COLUMN SAL TO SALARY;
+
+Q6- Rename the FK constraint names and verify the names for the EMP1.
+Ans-
+SELECT CONSTRAINT_NAME
+FROM USER_CONSTRAINTS
+WHERE TABLE_NAME='EMP1';
+ALTER TABLE EMP1
+RENAME CONSTRAINT FK_MGR TO FK_MANAGER;
+ALTER TABLE EMP1
+RENAME CONSTRAINT FK_DEPT TO FK_DEPARTMENT;
+SELECT CONSTRAINT_NAME
+FROM USER_CONSTRAINTS
+WHERE TABLE_NAME='EMP1';
+
+Q7- Modify ENAME Column by increasing the length of the column to 40.
+Ans-
+ALTER TABLE EMP1
+MODIFY ENAME VARCHAR2(40);
+
+Q8- Drop the NOT NULL constraint for ENAME.
+Ans-
+ALTER TABLE EMP1
+MODIFY ENAME NULL;
+
+Q9- Create comment on Dept1 table as ‘Depts of WIPRO’
+Ans-
+COMMENT ON TABLE DEPT1
+IS 'Depts of WIPRO';
+
+Q10- Create comment on Deptno of Dept1 as ‘Deptno of WIPRO’
+Ans-
+COMMENT ON COLUMN DEPT1.DEPTNO
+IS 'Deptno of WIPRO';
+
+Q11- Create a comment on Emp1 table as ‘Employees of WIPRO’
+Ans-
+COMMENT ON TABLE EMP1
+IS 'Employees of WIPRO';
+
+Q12- Create a comment on Empno of Emp1 table as ‘Empno of WIPRO’
+Ans-
+COMMENT ON COLUMN EMP1.EMPNO
+IS 'Empno of WIPRO';
+
+Q13- Remove all the comment on the tables and columns.
+Ans-
+COMMENT ON TABLE DEPT1 IS '';
+COMMENT ON TABLE EMP1 IS '';
+COMMENT ON COLUMN DEPT1.DEPTNO IS '';
+COMMENT ON TABLE EMP1 IS '';
+COMMENT ON COLUMN DEPT1.DEPTNO IS '';
+COMMENT ON COLUMN EMP1.EMPNO IS '';
+
+Q14- Set sal,ename columns of Emp1 table as unused.
+Ans-
+ALTER TABLE EMP1
+SET UNUSED (SAL,ENAME);
+ALTER TABLE EMP1
+SET UNUSED (SALARY,ENAME);
+
+Q15- Drop the unused columns.
+Ans-
+ALTER TABLE EMP1
+DROP UNUSED COLUMNS;
+
+Q16- Drop Emp1,Dept1 Tables.
+Ans-
+DROP TABLE EMP1;
+DROP TABLE DEPT1;
+
+Q17- Create Table Emp1 from EMP table by copying data also. Check your data.
+Ans-
+CREATE TABLE EMP1
+AS
+SELECT *
+FROM EMP;
+
+Q18- Rename Emp1 to EMP_Test.
+Ans-
+RENAME EMP1 TO EMP_TEST;
+
+Q19- Truncate Emp_Test table and confirm your delete.
+Ans-
+TRUNCATE TABLE EMP_TEST;
+
+Q20- Create Emp2 from Emp by only copying Empno,Ename,sal columns by copying Data.
+Ans-
+CREATE TABLE EMP2
+AS
+SELECT EMPNO,
+       ENAME,
+       SAL
+FROM EMP;
+
+Q21- Drop Emp2 Table.
+Ans-
+DROP TABLE EMP2;
+
+Q22- Create Emp2 table again from EMP table without copying data.
+Ans-
+CREATE TABLE EMP2
+AS
+SELECT EMPNO,
+       ENAME,
+       SAL
+FROM EMP
+WHERE 1=2;
+
+Q23- Drop Emp2 table.
+Ans-
+DROP TABLE EMP2;
+
+Q24- Flashback the first Emp2 table that contained data and check your table.
+Ans-
+SHOW RECYCLEBIN;
+FLASHBACK TABLE EMP2 TO BEFORE DROP;
+
+Q25- Flashback the recently dropped table by renaming to EMP2_1.
+Ans-
+FLASHBACK TABLE EMP2
+TO BEFORE DROP
+RENAME TO EMP2_1;
+SELECT ORIGINAL_NAME,
+       OBJECT_NAME
+FROM USER_RECYCLEBIN;
+
+Q26- Check your tables.
+Ans-
+SELECT TABLE_NAME
+FROM USER_TABLES;
