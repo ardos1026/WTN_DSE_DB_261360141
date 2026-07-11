@@ -1,0 +1,26 @@
+Q1- Write a program that displays the Netsal(Sal+comm) of an employee entered at run time from EMP table.(Use NVL Function).
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+    V_EMPNO EMP.EMPNO%TYPE;
+    V_ENAME EMP.ENAME%TYPE;
+    V_NETSAL NUMBER(10,2);
+BEGIN
+    V_EMPNO := &EMPNO;
+
+    SELECT ENAME,
+           SAL + NVL(COMM,0)
+    INTO V_ENAME,
+         V_NETSAL
+    FROM EMP
+    WHERE EMPNO = V_EMPNO;
+
+    DBMS_OUTPUT.PUT_LINE('Employee Number : ' || V_EMPNO);
+    DBMS_OUTPUT.PUT_LINE('Employee Name   : ' || V_ENAME);
+    DBMS_OUTPUT.PUT_LINE('Net Salary      : ' || V_NETSAL);
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Employee not found.');
+END;
