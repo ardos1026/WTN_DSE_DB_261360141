@@ -1,0 +1,335 @@
+Q1- Write a implicit cursor that will prompt for a JOB and delete the employees working in that Job. 
+Store the number of records deleted in a session variable.
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+    V_JOB EMP.JOB%TYPE;
+BEGIN
+    V_JOB := '&JOB';
+
+    DELETE FROM EMP
+    WHERE JOB = V_JOB;
+
+    DBMS_OUTPUT.PUT_LINE('Rows Deleted = ' || SQL%ROWCOUNT);
+END;
+/
+
+Q2- Rollback the the previous Delete Statement.
+Ans-
+ROLLBACK;
+
+Q3- Write a program that displays the Top N salaries using simple Explicit Cursors.
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+    N NUMBER := &N;
+
+    CURSOR C1 IS
+    SELECT ENAME, SAL
+    FROM EMP
+    ORDER BY SAL DESC;
+
+    V_ENAME EMP.ENAME%TYPE;
+    V_SAL EMP.SAL%TYPE;
+    CNT NUMBER := 0;
+
+BEGIN
+    OPEN C1;
+
+    LOOP
+        FETCH C1 INTO V_ENAME, V_SAL;
+        EXIT WHEN C1%NOTFOUND OR CNT = N;
+
+        DBMS_OUTPUT.PUT_LINE(V_ENAME || '  ' || V_SAL);
+        CNT := CNT + 1;
+    END LOOP;
+
+    CLOSE C1;
+END;
+/
+
+Q4- Create a Simple Explicit Cursor that displays all the employees who are earning more than the average salary of the Emp Table.
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+CURSOR C1 IS
+SELECT ENAME,SAL
+FROM EMP
+WHERE SAL >
+(
+SELECT AVG(SAL)
+FROM EMP
+);
+
+BEGIN
+
+FOR REC IN C1 LOOP
+
+DBMS_OUTPUT.PUT_LINE(REC.ENAME||' '||REC.SAL);
+
+END LOOP;
+
+END;
+/
+
+Q5- Create a Simple Explicit cursor that displays the employees who earn more than 2000 and have joined the company after 15-Jun-1981.  
+Print the output  :   <> earns <> and joined the organization on <>.
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+CURSOR C1 IS
+SELECT ENAME,SAL,HIREDATE
+FROM EMP
+WHERE SAL>2000
+AND HIREDATE>TO_DATE('15-JUN-1981','DD-MON-YYYY');
+
+BEGIN
+
+FOR REC IN C1 LOOP
+
+DBMS_OUTPUT.PUT_LINE
+(
+REC.ENAME||
+' earns '||
+REC.SAL||
+' and joined the organization on '||
+TO_CHAR(REC.HIREDATE,'DD-MON-YYYY')
+);
+
+END LOOP;
+
+END;
+/
+
+Q6- Create a Simple Explicit cursor that displays the hiredate in the format DD-MM-RRRR and Day. Sort the records on DAY starting from Saturday.
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+CURSOR C1 IS
+SELECT ENAME,
+TO_CHAR(HIREDATE,'DD-MM-YYYY') HDATE,
+TO_CHAR(HIREDATE,'DAY') DY
+FROM EMP
+ORDER BY TO_CHAR(HIREDATE,'D');
+
+BEGIN
+
+FOR REC IN C1 LOOP
+
+DBMS_OUTPUT.PUT_LINE
+(
+REC.ENAME||' '||
+REC.HDATE||' '||
+REC.DY
+);
+
+END LOOP;
+
+END;
+/
+
+Q7- Create a simple explicit cursor that displays the employees  names and commission amounts. If an employee does not earn commission, show “No Commission" . Label the column COMM.
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+CURSOR C1 IS
+SELECT ENAME,
+NVL(TO_CHAR(COMM),'No Commission') COMM
+FROM EMP;
+
+BEGIN
+
+FOR REC IN C1 LOOP
+
+DBMS_OUTPUT.PUT_LINE
+(
+REC.ENAME||' '||
+REC.COMM
+);
+
+END LOOP;
+
+END;
+/
+
+Q8- Create a parameter cursor that takes DEPTNO as a parameter and update the star column with ‘*’. 
+Every ‘*’ represent a 1000.
+For example : If the employees salary is 5000 then update star column with ‘*****’. 
+Use Parameter Cursor ,CURSOR WITH FOR LOOP and  WHERE CURRENT OF OPTION.
+Ans-
+ALTER TABLE EMP ADD STAR VARCHAR2(20);
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+CURSOR C1(P_DEPT NUMBER) IS
+SELECT ROWID RID,SAL
+FROM EMP
+WHERE DEPTNO=P_DEPT
+FOR UPDATE;
+
+BEGIN
+
+FOR REC IN C1(&DEPTNO) LOOP
+
+UPDATE EMP
+SET STAR=RPAD('*',REC.SAL/1000,'*')
+WHERE CURRENT OF C1;
+
+END LOOP;
+
+END;
+/
+
+Q9- Write a Parameter Cursor program that promotes CLERK who earn more than 1000 to SR CLERK and increase the salary by 10%. Pass CLERK as a parameter to the Cursor.  
+Use Parameter Cursor,  CUSOR WITH FOR LOOP and CURSOR WITH UPDATE CLAUSE.
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+CURSOR C1(P_JOB VARCHAR2) IS
+
+SELECT JOB,SAL
+FROM EMP
+WHERE JOB=P_JOB
+AND SAL>1000
+FOR UPDATE;
+
+BEGIN
+
+FOR REC IN C1('CLERK') LOOP
+
+UPDATE EMP
+
+SET JOB='SR CLERK',
+SAL=SAL*1.10
+
+WHERE CURRENT OF C1;
+
+END LOOP;
+
+END;
+/
+
+
+Q10- Display entire record  from the Dept table by passing a DEPTNO. 
+Increase the Salary of employees working in deptno 10 by 15%, Deptno 20 by 15% and others by 5% Also display the corresponding the employees working in that Dept. 
+Use a parameter Cursor , For Loop Cursor and Cursor with Update clause.
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+CURSOR C1(P_DEPT NUMBER) IS
+
+SELECT *
+
+FROM EMP
+
+WHERE DEPTNO=P_DEPT
+
+FOR UPDATE;
+
+BEGIN
+
+FOR REC IN C1(&DEPTNO) LOOP
+
+IF REC.DEPTNO=10 THEN
+
+UPDATE EMP
+SET SAL=SAL*1.15
+WHERE CURRENT OF C1;
+
+ELSIF REC.DEPTNO=20 THEN
+
+UPDATE EMP
+SET SAL=SAL*1.15
+WHERE CURRENT OF C1;
+
+ELSE
+
+UPDATE EMP
+SET SAL=SAL*1.05
+WHERE CURRENT OF C1;
+
+END IF;
+
+DBMS_OUTPUT.PUT_LINE
+(
+REC.EMPNO||' '||
+REC.ENAME||' '||
+REC.SAL
+);
+
+END LOOP;
+
+END;
+/
+
+Q11- Write a program that will prompt the user for a CHOICE. IF CHOICE is 1 then display all the employees who earn more than 2000 from EMP table else display all the Employees who earn  less than 2000.
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+TYPE EMP_CURSOR IS REF CURSOR;
+
+RC EMP_CURSOR;
+
+CHOICE NUMBER:=&CHOICE;
+
+V_ENAME EMP.ENAME%TYPE;
+V_SAL EMP.SAL%TYPE;
+
+BEGIN
+
+IF CHOICE=1 THEN
+
+OPEN RC FOR
+
+SELECT ENAME,SAL
+
+FROM EMP
+
+WHERE SAL>2000;
+
+ELSE
+
+OPEN RC FOR
+
+SELECT ENAME,SAL
+
+FROM EMP
+
+WHERE SAL<2000;
+
+END IF;
+
+LOOP
+
+FETCH RC INTO V_ENAME,V_SAL;
+
+EXIT WHEN RC%NOTFOUND;
+
+DBMS_OUTPUT.PUT_LINE
+(
+V_ENAME||' '||V_SAL
+);
+
+END LOOP;
+
+CLOSE RC;
+
+END;
+/
