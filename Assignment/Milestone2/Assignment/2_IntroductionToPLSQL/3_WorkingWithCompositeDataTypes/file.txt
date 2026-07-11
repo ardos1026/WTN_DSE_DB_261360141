@@ -1,0 +1,32 @@
+Q1- Write a program that will display the entire row by passing the empno. (Use %ROWTYPE)
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+    V_EMPNO EMP.EMPNO%TYPE;
+    EMP_REC EMP%ROWTYPE;
+
+BEGIN
+
+    V_EMPNO := &EMPNO;
+
+    SELECT *
+    INTO EMP_REC
+    FROM EMP
+    WHERE EMPNO = V_EMPNO;
+
+    DBMS_OUTPUT.PUT_LINE('Employee Number : ' || EMP_REC.EMPNO);
+    DBMS_OUTPUT.PUT_LINE('Employee Name   : ' || EMP_REC.ENAME);
+    DBMS_OUTPUT.PUT_LINE('Job             : ' || EMP_REC.JOB);
+    DBMS_OUTPUT.PUT_LINE('Manager         : ' || EMP_REC.MGR);
+    DBMS_OUTPUT.PUT_LINE('Hire Date       : ' || EMP_REC.HIREDATE);
+    DBMS_OUTPUT.PUT_LINE('Salary          : ' || EMP_REC.SAL);
+    DBMS_OUTPUT.PUT_LINE('Commission      : ' || NVL(TO_CHAR(EMP_REC.COMM), 'NULL'));
+    DBMS_OUTPUT.PUT_LINE('Department No   : ' || EMP_REC.DEPTNO);
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Employee Not Found');
+
+END;
+/
