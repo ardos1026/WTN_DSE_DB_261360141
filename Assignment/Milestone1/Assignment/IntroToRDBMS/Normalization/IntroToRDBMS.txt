@@ -1,0 +1,61 @@
+Q1 - Observe the structureas of a given EMPLOYEE table as below and suggest if this table can be further Normalized
+EMPNO,ENAME,SAL,DEPTNO,DNAME,LOC
+Explain what normal form this table is and how you can make this into next normal form.
+
+Ans- 
+Step 1: Identify Functional Dependencies
+EMPNO → ENAME, SAL, DEPTNO
+DEPTNO → DNAME, LOC
+This means:
+EMPNO → DEPTNO → DNAME, LOC
+There is a Transitive Dependency.
+So the table is in Second Normal Form (2NF).
+Step 2: Remove Transitive Dependencies
+Now the table will be converted into 3NF by removing Transitive Dependencies.
+After removing Transitive Dependencies from above table, The table looks like following:
+EMPLOYEE Table
+EMPNO	ENAME	SAL	DEPTNO
+Primary Key:
+EMPNO
+DEPARTMENT Table
+DEPTNO	DNAME	LOC
+Primary Key
+DEPTNO
+
+Q2 - Observe the structureas of a given STUDENT table as below and suggest if this table can be further Normalized
+ROLLNO, NAME,AGE,EXAM, MARKS, GRADE
+Explain what normal form this table is and how you can make this into next normal form
+
+Ans-
+Step 1- Find current Normal Form:
+In the given table, there is a Functional Dependency i.e.
+ROLLNO, EXAM -> MARKS
+MARKS -> GRADE
+ROLLNO -> NAME, AGE
+Here also, There is a Transitive Dependency i.e.
+ROLLNO, EXAM -> MARKS -> GRADE
+So, the current normal form of given table is 1NF
+Step 2- Conversion to 2NF:
+ROLLNO-> NAME,AGE
+ROLLNO-> EXAM,MARKS,GRADE
+So the current table is converted into 2NF.
+Step 3-  Conversion to 3NF:
+Now check again, since MARKS → GRADE
+there is still a Transitive Dependency.
+ROLLNO-> NAME,AGE
+ROLLNO-> EXAM,MARKS
+MARKS-> GRADE
+Now the table is in 3NF.
+
+Q3 - Observe the structure of a given EMPLOYEE table and suggest what kind of problem this table has and how to solve the problem
+EMPNO,PROJECT_NO,NO_OF_DAYS,CUSTOMERNAME
+In the above table EMPNO AND PROJECT_NO both are together a composite primary key 
+
+Ans-
+Given table has Functional Dependencies i.e.
+PROJECT_NO -> CUSTOMERNAME
+Customer Name depends only on PROJECT_NO. Since PROJECT_NO is only part of the composite key, this is called Partial Dependency Problem
+The table is in 1NF but not in 2NF.
+Conversion to 2NF :-
+EMPNO -> PROJECT_NO,NO_OF_DAYS
+PROJECT_NO -> CUSTOMERNAME
