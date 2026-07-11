@@ -1,0 +1,79 @@
+Q1- Create a procedure to accept an empno as a input parameter and display the detail like ename,sal and deptno.
+Ans-
+CREATE OR REPLACE PROCEDURE EMP_DETAILS
+(
+    P_EMPNO IN EMP.EMPNO%TYPE
+)
+IS
+    V_ENAME EMP.ENAME%TYPE;
+    V_SAL EMP.SAL%TYPE;
+    V_DEPTNO EMP.DEPTNO%TYPE;
+BEGIN
+
+    SELECT ENAME, SAL, DEPTNO
+    INTO V_ENAME, V_SAL, V_DEPTNO
+    FROM EMP
+    WHERE EMPNO = P_EMPNO;
+
+    DBMS_OUTPUT.PUT_LINE('Employee Name : ' || V_ENAME);
+    DBMS_OUTPUT.PUT_LINE('Salary        : ' || V_SAL);
+    DBMS_OUTPUT.PUT_LINE('Department No : ' || V_DEPTNO);
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Employee Not Found');
+END;
+/
+SET SERVEROUTPUT ON;
+
+EXEC EMP_DETAILS(7788);
+
+Q2- Create a function called Add_Num() that accept two paraemter of number type and return the addition result in number type.
+Ans-
+CREATE OR REPLACE FUNCTION ADD_NUM
+(
+    A NUMBER,
+    B NUMBER
+)
+RETURN NUMBER
+IS
+BEGIN
+    RETURN A + B;
+END;
+/
+SELECT ADD_NUM(20,30)
+FROM DUAL;
+
+
+
+Q3- Create a procedure that will display all the names list of procedures and functions from the current schema by querying user_source table with the help of cursor.
+Ans-
+CREATE OR REPLACE PROCEDURE SHOW_PROGRAMS
+IS
+
+    CURSOR C1 IS
+    SELECT DISTINCT NAME, TYPE
+    FROM USER_SOURCE
+    WHERE TYPE IN ('PROCEDURE','FUNCTION')
+    ORDER BY TYPE, NAME;
+
+BEGIN
+
+    DBMS_OUTPUT.PUT_LINE('Stored Programs');
+    DBMS_OUTPUT.PUT_LINE('---------------------------');
+
+    FOR REC IN C1 LOOP
+
+        DBMS_OUTPUT.PUT_LINE
+        (
+            RPAD(REC.TYPE,12) || ' ' || REC.NAME
+        );
+
+    END LOOP;
+
+END;
+/
+SET SERVEROUTPUT ON;
+
+EXEC SHOW_PROGRAMS;
+
