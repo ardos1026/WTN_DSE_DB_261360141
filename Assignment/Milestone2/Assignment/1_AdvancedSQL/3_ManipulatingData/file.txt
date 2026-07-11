@@ -1,0 +1,211 @@
+Q1- Create EmpTest from Emp table by copying structure and data.
+Ans-
+CREATE TABLE EMPTEST AS
+SELECT *
+FROM EMP;
+
+Q2- Add a new row into the EmpTest table for Empno,Ename,Sal columns. In Ename should have the Current User.
+Ans-
+INSERT INTO EMPTEST(EMPNO,ENAME,SAL)
+VALUES(9999,USER,5000);
+
+Q3- Update EmpTest by increasing the Salary of TURNER by 15%. Confirm your changes.
+Ans-
+UPDATE EMPTEST
+SET SAL = SAL * 1.15
+WHERE ENAME='TURNER';
+
+Q4- Update the salary of Smith with salary of Scott using EmpTest table.
+Ans-
+UPDATE EMPTEST
+SET SAL=
+(
+SELECT SAL
+FROM EMPTEST
+WHERE ENAME='SCOTT'
+)
+WHERE ENAME='SMITH';
+
+Q5- Increase all the employees salary by 10% in EmpTest table who are working in NEW YORK.
+Ans-
+UPDATE EMPTEST
+SET SAL=SAL*1.10
+WHERE DEPTNO=
+(
+SELECT DEPTNO
+FROM DEPT
+WHERE LOC='NEW YORK'
+);
+
+Q6- Delete all the Comm data from EmpTest Table.
+Ans-
+UPDATE EMPTEST
+SET COMM=NULL;
+
+Q7- Delete all the employees from EmpTest table who are working in SALES dept.
+Ans-
+DELETE FROM EMPTEST
+WHERE DEPTNO=
+(
+SELECT DEPTNO
+FROM DEPT
+WHERE DNAME='SALES'
+);
+
+Q8- Delete all the who are working with that employee, except that Employee.(Prompt for the ENAME).
+Ans-
+DELETE FROM EMPTEST
+WHERE DEPTNO=
+(
+SELECT DEPTNO
+FROM EMPTEST
+WHERE ENAME='&ENAME'
+)
+AND ENAME<>'&ENAME';
+
+Q9- Create Emp2 from Emp by only copying Empno,Ename,sal without copying data
+Ans-
+CREATE TABLE EMP2 AS
+SELECT EMPNO,
+       ENAME,
+       SAL
+FROM EMP
+WHERE 1=2;
+
+Q10- Create Emp3 from Emp by only copying Empno,Job without copying data.
+Ans-
+CREATE TABLE EMP3 AS
+SELECT EMPNO,
+       JOB
+FROM EMP
+WHERE 1=2;
+
+Q11- Using multitable insert  Emp data into Emp2 and Emp3 Tables
+Ans-
+INSERT ALL
+INTO EMP2(EMPNO,ENAME,SAL)
+VALUES(EMPNO,ENAME,SAL)
+
+INTO EMP3(EMPNO,JOB)
+VALUES(EMPNO,JOB)
+
+SELECT EMPNO,
+       ENAME,
+       SAL,
+       JOB
+FROM EMP;
+
+Q12- Truncate Emp2 Table  and insert following two rows  as follows: 7788, SMITH, 4500  /7654, JACK, 3500
+Ans-
+TRUNCATE TABLE EMP2;
+INSERT INTO EMP2
+VALUES(7788,'SMITH',4500);
+INSERT INTO EMP2
+VALUES(7654,'JACK',3500);
+
+Q13- Commit the Data.
+Ans-
+COMMIT;
+
+Q14- Using Merge statement insert and update Emp2 using Emp
+Ans-
+MERGE INTO EMP2 E2
+USING EMP E
+ON(E2.EMPNO=E.EMPNO)
+
+WHEN MATCHED THEN
+UPDATE
+SET
+E2.ENAME=E.ENAME,
+E2.SAL=E.SAL
+
+WHEN NOT MATCHED THEN
+INSERT(EMPNO,ENAME,SAL)
+VALUES(E.EMPNO,E.ENAME,E.SAL);
+	
+Q15- Verify your changes.
+Ans-
+SELECT *
+FROM EMP2;
+	
+Q16- Rollback the Data.
+Ans-
+ROLLBACK;
+
+Q17- Using Merge statements update Emp2 table for only Empno=7788 and Insert only those employees whose salary is more than 3000.
+Ans-
+MERGE INTO EMP2 E2
+USING
+(
+SELECT *
+FROM EMP
+WHERE EMPNO=7788
+OR SAL>3000
+) E
+
+ON(E2.EMPNO=E.EMPNO)
+
+WHEN MATCHED THEN
+UPDATE
+SET
+E2.ENAME=E.ENAME,
+E2.SAL=E.SAL
+WHERE E2.EMPNO=7788
+
+WHEN NOT MATCHED THEN
+INSERT(EMPNO,ENAME,SAL)
+VALUES(E.EMPNO,E.ENAME,E.SAL)
+WHERE E.SAL>3000;
+	
+Q18- Verify your changes.
+Ans-
+SELECT *
+FROM EMP2;
+
+Q19- Create a User WIPRO.
+Ans-
+CREATE USER WIPRO
+IDENTIFIED BY WIPRO123;
+
+Q20- Grant ALL permission on EMP table from SCOTT to WIPRO user.
+Ans-
+GRANT ALL
+ON EMP
+TO WIPRO;
+
+Q21- Delete all the employees in deptno 10 and do not issue a Commit.
+Ans-
+DELETE FROM EMP
+WHERE DEPTNO=10;
+
+Q22- From WIPRO user delete all the employees from SCOTT.EMP table in DEPTNO=10. What happens and Why?
+Ans-
+DELETE FROM SCOTT.EMP
+WHERE DEPTNO=10;
+
+Q23- Issue a Rollback in SCOTT user and Check the WIPRO user.
+Ans-
+ROLLBACK;
+SELECT *
+FROM SCOTT.EMP
+WHERE DEPTNO=10;
+
+Q24- In SCOTT user give a query on EMP using FOR UPDATE clause with WAIT 20 seconds? What happens?
+Ans-
+SELECT *
+FROM EMP
+WHERE DEPTNO=10
+FOR UPDATE WAIT 20;
+
+
+Q25- In WIPRO User issue a ROLLBACK and now check in SCOTT user.
+Ans-
+ROLLBACK;
+SELECT *
+FROM EMP;
+
+Q26- ROLLBACK all the transactions in SCOTT and WIPRO Users.
+Ans-
+ROLLBACK;
+ROLLBACK;
+
