@@ -1,0 +1,190 @@
+Q1- Create a report that displays EMPNO,ENAME,DEPTNO of employees who work with that Employee.(Nested Sub Query)
+Ans-
+SELECT EMPNO, ENAME, DEPTNO
+FROM EMP
+WHERE DEPTNO = (
+    SELECT DEPTNO
+    FROM EMP
+    WHERE ENAME = 'SCOTT'
+);
+
+Q2- Display the employees who earn more than the avg salary of EMP table.( Nested Sub Query).
+Ans-
+SELECT ENAME, SAL
+FROM EMP
+WHERE SAL > (
+    SELECT AVG(SAL)
+    FROM EMP
+);
+
+Q3- Display the ENAME,JOB  who are  Managers( Use Exists Operator)
+Ans-
+SELECT E.ENAME, E.JOB
+FROM EMP E
+WHERE EXISTS (
+    SELECT 1
+    FROM EMP X
+    WHERE X.MGR = E.EMPNO
+);
+
+Q4- Display the employees who earn less than the least salary of DEPTNO 10.(Use ALL operator).
+Ans-
+SELECT ENAME, SAL
+FROM EMP
+WHERE SAL < ALL (
+    SELECT SAL
+    FROM EMP
+    WHERE DEPTNO = 10
+);
+
+Q5- Display the employees  who have the same DEPTNO and MGR of a given employee, excluding that  employee.(Use Nested Sub Query)
+Ans-
+SELECT EMPNO, ENAME
+FROM EMP
+WHERE (DEPTNO, MGR) = (
+    SELECT DEPTNO, MGR
+    FROM EMP
+    WHERE ENAME = 'SCOTT'
+)
+AND ENAME <> 'SCOTT';
+
+Q6- Write a query that displays the employee number and name of all employees who work in a department with any employee whose name contains a R
+Ans-
+SELECT EMPNO, ENAME
+FROM EMP
+WHERE DEPTNO IN (
+    SELECT DEPTNO
+    FROM EMP
+    WHERE ENAME LIKE '%R%'
+);
+
+Q7- The HR department needs a report that displays the ename, deptno, job of all employees whose work in NEW YORK.(Nest Sub Query)
+Ans-
+SELECT ENAME, DEPTNO, JOB
+FROM EMP
+WHERE DEPTNO = (
+    SELECT DEPTNO
+    FROM DEPT
+    WHERE LOC = 'NEW YORK'
+);
+
+Q8- Modify the query so that the user is prompted for a LOC
+Ans-
+SELECT ENAME, DEPTNO, JOB
+FROM EMP
+WHERE DEPTNO = (
+    SELECT DEPTNO
+    FROM DEPT
+    WHERE LOC='&LOCATION'
+);
+
+Q9- Create a report for HR that displays the  name and salary of every employee who reports to King.(Nest Sub Query)
+Ans-
+SELECT ENAME, SAL
+FROM EMP
+WHERE MGR = (
+    SELECT EMPNO
+    FROM EMP
+    WHERE ENAME='KING'
+);
+
+Q10- Write a query to display all the employees working with JAMES
+Ans-
+SELECT ENAME
+FROM EMP
+WHERE DEPTNO = (
+    SELECT DEPTNO
+    FROM EMP
+    WHERE ENAME='JAMES'
+)
+AND ENAME <> 'JAMES';
+
+Q11- Display all the employees who earn less than the average salaries of their respective departments.(Correlated Sub Queries)
+Ans-
+SELECT ENAME, SAL, DEPTNO
+FROM EMP E
+WHERE SAL < (
+    SELECT AVG(SAL)
+    FROM EMP
+    WHERE DEPTNO = E.DEPTNO
+);
+
+Q12- Write a query to display the LOC and average salary of Each location.(Scalar Sub query).
+Ans-
+SELECT D.LOC,
+(
+    SELECT ROUND(AVG(SAL))
+    FROM EMP E
+    WHERE E.DEPTNO = D.DEPTNO
+) AS AVG_SAL
+FROM DEPT D;
+
+Q13- Write a query to display the least N salaries. Use In-Line Views.
+Ans-
+SELECT *
+FROM
+(
+    SELECT EMPNO, ENAME, SAL
+    FROM EMP
+    ORDER BY SAL
+)
+WHERE ROWNUM <= 3;
+
+Q14- Display the Last N rows from the employees table(Use Correlated Sub Queries).
+Ans-
+SELECT *
+FROM EMP E
+WHERE 3 >
+(
+    SELECT COUNT(*)
+    FROM EMP
+    WHERE EMPNO > E.EMPNO
+)
+ORDER BY EMPNO;
+
+Q15- Display the employees from employees table and sort only employees working in DALLAS.(Scalar Sub Query).
+Ans-
+SELECT E.*
+FROM EMP E
+ORDER BY
+(
+    SELECT LOC
+    FROM DEPT D
+    WHERE D.DEPTNO = E.DEPTNO
+) DESC;
+
+Q16- Display the employees who earn a salary less than avgsal of their respective department. Also display the avgsal.(Use Inline Views).
+Ans-
+SELECT E.EMPNO,
+       E.ENAME,
+       E.SAL,
+       A.AVGSAL
+FROM EMP E,
+(
+    SELECT DEPTNO,
+           AVG(SAL) AVGSAL
+    FROM EMP
+    GROUP BY DEPTNO
+) A
+WHERE E.DEPTNO = A.DEPTNO
+AND E.SAL < A.AVGSAL;
+
+Q17- Write a query that display the LOC of those DEPTS that have a sum of sal less than the avgsal of all the employees in DEPT table. (Use WITH Clause).
+Ans-
+WITH DEPTSAL AS
+(
+    SELECT DEPTNO,
+           SUM(SAL) TOTALSAL
+    FROM EMP
+    GROUP BY DEPTNO
+)
+SELECT D.LOC
+FROM DEPT D
+JOIN DEPTSAL DS
+ON D.DEPTNO = DS.DEPTNO
+WHERE DS.TOTALSAL <
+(
+    SELECT AVG(SAL)
+    FROM EMP
+);
+
