@@ -1,54 +1,29 @@
-# 💾 Database Solution Expert (DSE)
+# 💾 Wipro TalentNext – Database Solution Expert (DSE)
 
-Welcome to my **Database Solution Expert (DSE)** repository. This repository contains my SQL, PL/SQL, and Oracle Database assignments completed as part of the **WTN DSE** course.
+This repository contains my assignments, practical exercises, and SQL/PLSQL programs completed during the **Database Solution Expert (DSE)** training offered under the **Wipro TalentNext Program**.
 
-## 📌 Repository Overview
+The course is designed to strengthen database concepts through hands-on learning with SQL, PL/SQL, Oracle Database, and Database Administration. :contentReference[oaicite:0]{index=0}
 
-The assignments are organized milestone-wise according to the course curriculum.
+---
 
-### 📖 Milestone 1
+## 📚 Course Modules
+
+### 📌 Milestone 1
 - Introduction to RDBMS
 - Introduction to SQL
 
-### 📖 Milestone 2
+### 📌 Milestone 2
 - Advanced SQL
 - Introduction to PL/SQL
 - Advanced PL/SQL
 
-### 📖 Milestone 3
+### 📌 Milestone 3
 - Database Tuning
 - Oracle Architecture
 
-### 📖 Milestone 4
+### 📌 Milestone 4
 - Database Administration
 - Advanced Features in Oracle
-
----
-
-## 📂 Folder Structure
-
-```
-WTN_DSE_DB_261360141/
-│
-├── Milestone-1/
-│   ├── Introduction-to-RDBMS
-│   └── Introduction-to-SQL
-│
-├── Milestone-2/
-│   ├── Advanced-SQL
-│   ├── Introduction-to-PLSQL
-│   └── Advanced-PLSQL
-│
-├── Milestone-3/
-│   ├── Database-Tuning
-│   └── Oracle-Architecture
-│
-├── Milestone-4/
-│   ├── Database-Administration
-│   └── Advanced-Features-in-Oracle
-│
-└── README.md
-```
 
 ---
 
@@ -57,37 +32,50 @@ WTN_DSE_DB_261360141/
 - Oracle Database
 - SQL
 - PL/SQL
-- SQL Developer
-- DBMS Concepts
+- Oracle SQL Developer
+- Database Management System (DBMS)
 
 ---
 
-## 🎯 Course Objectives
+## 📂 Repository Structure
 
-- Learn Relational Database Management Systems (RDBMS)
-- Develop SQL querying skills
-- Master PL/SQL programming
+```text
+WTN_DSE_DB_261360141/
+├── Milestone-1/
+├── Milestone-2/
+├── Milestone-3/
+├── Milestone-4/
+└── README.md
+```
+
+---
+
+## 🎯 Learning Outcomes
+
+- Understand Relational Database Management Systems (RDBMS)
+- Write and optimize SQL queries
+- Develop PL/SQL programs
 - Understand Oracle Database Architecture
-- Explore Database Administration
-- Optimize database performance through tuning
+- Learn Database Administration concepts
+- Explore Database Performance Tuning
 
 ---
 
 ## 🚀 Getting Started
 
-Clone the repository:
+Clone this repository:
 
 ```bash
 git clone https://github.com/ardos1026/WTN_DSE_DB_261360141.git
 ```
 
-Open the SQL scripts using **Oracle SQL Developer** (or any compatible SQL client) and execute them according to the assignment instructions.
+Open the SQL or PL/SQL scripts using **Oracle SQL Developer** or any compatible Oracle database environment.
 
 ---
 
-## 📚 Purpose
+## 🙏 Acknowledgements
 
-This repository serves as a collection of my practical assignments and exercises completed during the **Database Solution Expert (DSE)** training. It demonstrates my understanding of SQL, PL/SQL, Oracle Database concepts, and database administration.
+This repository is part of the **Wipro TalentNext – Database Solution Expert (DSE)** training program, which focuses on industry-oriented database technologies and practical learning. :contentReference[oaicite:1]{index=1}
 
 ---
 
@@ -99,4 +87,4 @@ This repository serves as a collection of my practical assignments and exercises
 
 ---
 
-⭐ *Thank you for visiting this repository!*
+> **Note:** This repository is maintained for educational and learning purposes as part of the Wipro TalentNext program.
