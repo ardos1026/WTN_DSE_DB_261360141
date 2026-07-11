@@ -1,0 +1,215 @@
+Q1- Create a table MESSAGES table with a column Result of type varchar2(1000)
+Write a program that prompt for SAL and get the corresponding ENAME from the EMP table. Do not use Explicit Cursors.
+If the value entered return one row then Insert into MESSAGES table with the ENAME||’ ‘||SAL. 
+If the value returned is more than one row then Insert into MESSAGES table as ‘More than one employee with a salary <>.
+If no value is returned then insert into MESSAGES table as ‘No Employee with that salary <>. 
+Any other error insert ‘Other Error’.
+Use all NAMED EXCEPTION HANDLERS.
+Handling Exceptions	
+Ans-
+CREATE TABLE MESSAGES
+(
+    RESULT VARCHAR2(1000)
+);
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+    V_SAL EMP.SAL%TYPE;
+    V_ENAME EMP.ENAME%TYPE;
+
+BEGIN
+
+    V_SAL := &SAL;
+
+    SELECT ENAME
+    INTO V_ENAME
+    FROM EMP
+    WHERE SAL = V_SAL;
+
+    INSERT INTO MESSAGES
+    VALUES(V_ENAME || ' ' || V_SAL);
+
+    COMMIT;
+
+EXCEPTION
+
+    WHEN NO_DATA_FOUND THEN
+
+        INSERT INTO MESSAGES
+        VALUES('No Employee with that salary ' || V_SAL);
+
+        COMMIT;
+
+    WHEN TOO_MANY_ROWS THEN
+
+        INSERT INTO MESSAGES
+        VALUES('More than one employee with salary ' || V_SAL);
+
+        COMMIT;
+
+    WHEN OTHERS THEN
+
+        INSERT INTO MESSAGES
+        VALUES('Other Error');
+
+        COMMIT;
+
+END;
+/
+
+Q2- Write a program that will prompt for Empno,ename,sal  and insert them into the Emp table. 
+Use Unnamed system defined exception handler
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+    V_EMPNO EMP.EMPNO%TYPE;
+    V_ENAME EMP.ENAME%TYPE;
+    V_SAL EMP.SAL%TYPE;
+
+BEGIN
+
+    V_EMPNO := &EMPNO;
+    V_ENAME := '&ENAME';
+    V_SAL := &SAL;
+
+    INSERT INTO EMP(EMPNO,ENAME,SAL)
+    VALUES(V_EMPNO,V_ENAME,V_SAL);
+
+    DBMS_OUTPUT.PUT_LINE('Employee Inserted');
+
+EXCEPTION
+
+    WHEN OTHERS THEN
+
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+
+END;
+/
+
+Q3- Write a program that will prompts for a EMPNO and delete the employee from the EMP  table. 
+Handle with User Defined Exceptions.
+Ans-
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+    V_EMPNO EMP.EMPNO%TYPE;
+
+    EMP_NOT_FOUND EXCEPTION;
+
+BEGIN
+
+    V_EMPNO := &EMPNO;
+
+    DELETE FROM EMP
+    WHERE EMPNO = V_EMPNO;
+
+    IF SQL%ROWCOUNT = 0 THEN
+
+        RAISE EMP_NOT_FOUND;
+
+    END IF;
+
+    DBMS_OUTPUT.PUT_LINE('Employee Deleted');
+
+EXCEPTION
+
+    WHEN EMP_NOT_FOUND THEN
+
+        DBMS_OUTPUT.PUT_LINE('Employee Does Not Exist');
+
+END;
+/
+
+Q4- Create a stock table with columns PNO,PNAME,RATE AND TR_QTY. 
+Insert some records in this table. 
+Create a PL/SQL block that takes PNO,TR_TYPE and TR_QTY from the Stock Table.
+If PNO is found and TR_TYPE is ‘R’ then update the TR_QTY with Old TR_QTY plus NEW TR_QTY.
+If PNO exists and TR_TYPE is ‘I’ then update the TR_QTY with Old TR_QTY minus NEW TR_QTY.
+Handle the user defined exceptions using USER DEFINED EXCEPTION HANDLERS.
+Ans-
+CREATE TABLE STOCK
+(
+    PNO NUMBER PRIMARY KEY,
+    PNAME VARCHAR2(30),
+    RATE NUMBER(8,2),
+    TR_QTY NUMBER
+);
+INSERT INTO STOCK VALUES(101,'Mouse',500,20);
+
+INSERT INTO STOCK VALUES(102,'Keyboard',900,15);
+
+INSERT INTO STOCK VALUES(103,'Monitor',12000,8);
+
+COMMIT;
+SET SERVEROUTPUT ON;
+
+DECLARE
+
+    V_PNO STOCK.PNO%TYPE;
+    V_TYPE CHAR(1);
+    V_QTY NUMBER;
+
+    INVALID_PRODUCT EXCEPTION;
+    INSUFFICIENT_STOCK EXCEPTION;
+
+    CURR_QTY STOCK.TR_QTY%TYPE;
+
+BEGIN
+
+    V_PNO := &PNO;
+    V_TYPE := '&TR_TYPE';
+    V_QTY := &TR_QTY;
+
+    SELECT TR_QTY
+    INTO CURR_QTY
+    FROM STOCK
+    WHERE PNO = V_PNO;
+
+    IF V_TYPE = 'R' THEN
+
+        UPDATE STOCK
+        SET TR_QTY = TR_QTY + V_QTY
+        WHERE PNO = V_PNO;
+
+        DBMS_OUTPUT.PUT_LINE('Stock Received');
+
+    ELSIF V_TYPE = 'I' THEN
+
+        IF CURR_QTY < V_QTY THEN
+
+            RAISE INSUFFICIENT_STOCK;
+
+        END IF;
+
+        UPDATE STOCK
+        SET TR_QTY = TR_QTY - V_QTY
+        WHERE PNO = V_PNO;
+
+        DBMS_OUTPUT.PUT_LINE('Stock Issued');
+
+    ELSE
+
+        RAISE INVALID_PRODUCT;
+
+    END IF;
+
+EXCEPTION
+
+    WHEN NO_DATA_FOUND THEN
+
+        DBMS_OUTPUT.PUT_LINE('Product Not Found');
+
+    WHEN INVALID_PRODUCT THEN
+
+        DBMS_OUTPUT.PUT_LINE('Invalid Transaction Type');
+
+    WHEN INSUFFICIENT_STOCK THEN
+
+        DBMS_OUTPUT.PUT_LINE('Insufficient Stock');
+
+END;
+/
