@@ -1,0 +1,318 @@
+Q1- Create Package PK1 with below 3 Procedures. 
+1. Procedure ADD_DEPT : This procedure will take 3 IN arguments DNO,NAME,LO and duly insert these values into the DEPT table. Handle the exception if the user tries to insert a duplicate row using User Defined Exception Handler.
+2. Procedure UPDATE_DEPT which takes 3 arguments DNO,NAME,LO. Update the DNAME,LOC for the corresponding DEPTNO. Handle exception when the user enters DEPTNO that does not exists.
+3. Procedure DELETE_DEPT which takes 1 argument DNO. Delete the record for the corresponding DEPTNO. Handle the required exception when the user enters a not existing DEPTNO.
+4. Create a Local Function CAL_CNT that returnsTRUE if DEPTNO does not Exists ELSE return FALSE. 
+Use this Function in all 3 Procedures.Create a One Time Procedure that displays the total number of rows.
+Ans-
+CREATE OR REPLACE PACKAGE PK1 IS
+
+   PROCEDURE ADD_DEPT
+   (
+      DNO NUMBER,
+      NAME VARCHAR2,
+      LO VARCHAR2
+   );
+
+   PROCEDURE UPDATE_DEPT
+   (
+      DNO NUMBER,
+      NAME VARCHAR2,
+      LO VARCHAR2
+   );
+
+   PROCEDURE DELETE_DEPT
+   (
+      DNO NUMBER
+   );
+
+   PROCEDURE DISP_TOTAL;
+
+END PK1;
+/
+
+CREATE OR REPLACE PACKAGE BODY PK1 IS
+
+   FUNCTION CAL_CNT(P_DNO NUMBER)
+   RETURN BOOLEAN
+   IS
+      CNT NUMBER;
+   BEGIN
+
+      SELECT COUNT(*)
+      INTO CNT
+      FROM DEPT
+      WHERE DEPTNO=P_DNO;
+
+      IF CNT=0 THEN
+         RETURN TRUE;
+      ELSE
+         RETURN FALSE;
+      END IF;
+
+   END;
+
+
+   PROCEDURE ADD_DEPT
+   (
+      DNO NUMBER,
+      NAME VARCHAR2,
+      LO VARCHAR2
+   )
+   IS
+   BEGIN
+
+      IF CAL_CNT(DNO) THEN
+
+         INSERT INTO DEPT
+         VALUES(DNO,NAME,LO);
+
+         DBMS_OUTPUT.PUT_LINE('Department Inserted');
+
+      ELSE
+
+         DBMS_OUTPUT.PUT_LINE('Duplicate Department');
+
+      END IF;
+
+   END;
+
+
+   PROCEDURE UPDATE_DEPT
+   (
+      DNO NUMBER,
+      NAME VARCHAR2,
+      LO VARCHAR2
+   )
+   IS
+   BEGIN
+
+      IF NOT CAL_CNT(DNO) THEN
+
+         UPDATE DEPT
+         SET DNAME=NAME,
+             LOC=LO
+         WHERE DEPTNO=DNO;
+
+         DBMS_OUTPUT.PUT_LINE('Department Updated');
+
+      ELSE
+
+         DBMS_OUTPUT.PUT_LINE('Department Not Found');
+
+      END IF;
+
+   END;
+
+
+   PROCEDURE DELETE_DEPT
+   (
+      DNO NUMBER
+   )
+   IS
+   BEGIN
+
+      IF NOT CAL_CNT(DNO) THEN
+
+         DELETE FROM DEPT
+         WHERE DEPTNO=DNO;
+
+         DBMS_OUTPUT.PUT_LINE('Department Deleted');
+
+      ELSE
+
+         DBMS_OUTPUT.PUT_LINE('Department Not Found');
+
+      END IF;
+
+   END;
+
+
+   PROCEDURE DISP_TOTAL
+   IS
+
+      CNT NUMBER;
+
+   BEGIN
+
+      SELECT COUNT(*)
+      INTO CNT
+      FROM DEPT;
+
+      DBMS_OUTPUT.PUT_LINE('Total Departments : '||CNT);
+
+   END;
+
+END PK1;
+/
+EXEC PK1.ADD_DEPT(50,'HR','BHOPAL');
+
+EXEC PK1.UPDATE_DEPT(50,'HR','INDORE');
+
+EXEC PK1.DELETE_DEPT(50);
+
+EXEC PK1.DISP_TOTAL;
+
+
+Q-2 Create a Package PK2 that has 2 Procedures DISP_FIRST3 and DISP_FIRST6 that will display the first 3 employees  and first 6 employees from the EMP Table. Create a Global Cursor.
+Ans-
+CREATE OR REPLACE PACKAGE PK2 IS
+
+   CURSOR C1 IS
+   SELECT *
+   FROM EMP
+   ORDER BY EMPNO;
+
+   PROCEDURE DISP_FIRST3;
+
+   PROCEDURE DISP_FIRST6;
+
+END PK2;
+/
+
+CREATE OR REPLACE PACKAGE BODY PK2 IS
+
+PROCEDURE DISP_FIRST3
+IS
+
+   CNT NUMBER:=0;
+
+BEGIN
+
+   FOR REC IN C1 LOOP
+
+      EXIT WHEN CNT=3;
+
+      DBMS_OUTPUT.PUT_LINE
+      (
+         REC.EMPNO||' '||
+         REC.ENAME
+      );
+
+      CNT:=CNT+1;
+
+   END LOOP;
+
+END;
+
+------------------------------------------------
+
+PROCEDURE DISP_FIRST6
+IS
+
+   CNT NUMBER:=0;
+
+BEGIN
+
+   FOR REC IN C1 LOOP
+
+      EXIT WHEN CNT=6;
+
+      DBMS_OUTPUT.PUT_LINE
+      (
+         REC.EMPNO||' '||
+         REC.ENAME
+      );
+
+      CNT:=CNT+1;
+
+   END LOOP;
+
+END;
+
+END PK2;
+/
+EXEC PK2.DISP_FIRST3;
+
+EXEC PK2.DISP_FIRST6;
+
+
+Q3- Create a sequence S2 start with 1 and increment by 1. 
+Create a package PK3 that has 2 procedures with the same name ADD_EMP. The procedure will take 3 arguments EMPNO,ENAME DEFAULT ‘UNK’, SAL DEFUALT 1000. This procedure inserts these values in the EMP table. The second procedure accepts 2 arguments NAME DEFAULT ‘UNK’, SAL DEFAULT 1000 and inserts into the EMP table calling the sequence S2 for EMPNO column. Also insert other ENAME and SAL columns.
+Ans-
+CREATE SEQUENCE S2
+START WITH 1
+INCREMENT BY 1;
+CREATE OR REPLACE PACKAGE PK3 IS
+
+PROCEDURE ADD_EMP
+(
+   EMPNO NUMBER,
+   ENAME VARCHAR2 DEFAULT 'UNK',
+   SAL NUMBER DEFAULT 1000
+);
+
+PROCEDURE ADD_EMP
+(
+   ENAME VARCHAR2 DEFAULT 'UNK',
+   SAL NUMBER DEFAULT 1000
+);
+
+END PK3;
+/
+CREATE OR REPLACE PACKAGE BODY PK3 IS
+
+------------------------------------------------
+
+PROCEDURE ADD_EMP
+(
+   EMPNO NUMBER,
+   ENAME VARCHAR2 DEFAULT 'UNK',
+   SAL NUMBER DEFAULT 1000
+)
+IS
+BEGIN
+
+   INSERT INTO EMP
+   (
+      EMPNO,
+      ENAME,
+      SAL
+   )
+   VALUES
+   (
+      EMPNO,
+      ENAME,
+      SAL
+   );
+
+   DBMS_OUTPUT.PUT_LINE('Employee Inserted');
+
+END;
+
+------------------------------------------------
+
+PROCEDURE ADD_EMP
+(
+   ENAME VARCHAR2 DEFAULT 'UNK',
+   SAL NUMBER DEFAULT 1000
+)
+IS
+BEGIN
+
+   INSERT INTO EMP
+   (
+      EMPNO,
+      ENAME,
+      SAL
+   )
+   VALUES
+   (
+      S2.NEXTVAL,
+      ENAME,
+      SAL
+   );
+
+   DBMS_OUTPUT.PUT_LINE('Employee Inserted using Sequence');
+
+END;
+
+END PK3;
+/
+EXEC PK3.ADD_EMP(9001,'AKASH',25000);
+EXEC PK3.ADD_EMP('RAHUL',18000);
+EXEC PK3.ADD_EMP;
+EMPNO = S2.NEXTVAL
+ENAME = UNK
+SAL = 1000
+
