@@ -1,0 +1,20 @@
+Q1- Use the Deptree view to generate all the dependencies for DEPT table.
+Ans-
+@?/rdbms/admin/utldtree.sql
+EXEC DEPTREE_FILL('TABLE','SCOTT','DEPT');
+DEPTREE_FILL(
+    object_type,
+    owner,
+    object_name
+);
+
+SELECT *
+FROM DEPTREE;
+SELECT NESTED_LEVEL,
+       TYPE,
+       SCHEMA,
+       NAME
+FROM DEPTREE
+ORDER BY SEQ#;
+DELETE FROM DEPTREE;
+COMMIT;
